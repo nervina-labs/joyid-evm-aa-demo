@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { connect } from "@joyid/evm";
+import "./App.css";
+import { useCurrentAddress, useUpdateAaAddress, useUpdateAddress } from "./hooks/useAccount";
+import { EvmAA } from "./components/EvmAA";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const updateAddress = useUpdateAddress();
+  const updateAaAddress = useUpdateAaAddress()
+  const address = useCurrentAddress();
+
+  const [connectLoading, setConnectLoading] = useState(false);
+
+  const onConnect = async () => {
+    setConnectLoading(true)
+    try {
+      const res = await connect();
+      updateAddress(res);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setConnectLoading(false);
+    }
+  };
+
+  const disconnect = () => {
+    updateAaAddress(undefined);
+    updateAddress(undefined);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div id="app">
+      <div className="text-2xl sticky font-bold text-center">JoyID EVM AA demo</div>
+      {address ? (
+        <div className="mb-[10px]">
+          <h1 className="text-xl mb-4">Connected: </h1>
+          <div>{address}</div>
+          <div className="divider" />
+          <EvmAA />
 
-export default App
+          <div className="divider" />
+          <button className="btn btn-primary capitalize w-[120px]" onClick={disconnect}>
+            Disconnect
+          </button>
+          <div className="divider" />
+        </div>
+      ) : (
+        <div className="text-center">
+          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" disabled={connectLoading} onClick={onConnect}>
+            {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
