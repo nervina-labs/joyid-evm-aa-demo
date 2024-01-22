@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Hex, stringToBytes, parseAbi, encodeFunctionData} from "viem";
 import {LocalAccountSigner} from "@alchemy/aa-core"
+import {VStack, Text, Button} from "@chakra-ui/react";
 import {SessionKeyProvider, getPermissionFromABI, ParamOperator, constants} from "@zerodev/sdk";
 import { useAaAddress, useCurrentAddress, useUpdateAaAddress } from "../hooks/useAccount";
 import { JoySigner } from "../evm-aa/signer";
@@ -22,6 +23,7 @@ export const EvmAA = () => {
   const updateAaAddress = useUpdateAaAddress();
   const [provider, setProvider] = useState<ECDSAProvider>();
   const [signature, setSignature] = useState<Hex>();
+  const [txHash, setTxHash] = useState<Hex>();
   const [sessionKeyProvider, setSessionKeyProvider] = useState<SessionKeyProvider>();
   const [sessionAddress, setSessionAddress] = useState<Hex>();
 
@@ -66,7 +68,7 @@ export const EvmAA = () => {
         permissions: [
           getPermissionFromABI({
             target: contractAddress,
-            valueLimit: 0n,
+            valueLimit: BigInt(0),
             abi: contractABI,
             functionName: "mint",
             args: [
@@ -97,43 +99,43 @@ export const EvmAA = () => {
       }),
     });
     await sessionKeyProvider!.waitForUserOperationTransaction(hash as Hex);
-    alert(`Mint NFT with Session Key tx hash: ${hash}`)
+    setTxHash(hash as Hex);
     setSessionMintLoading(false);
   }
 
   return (
-    <div>
-      <button className="btn btn-primary capitalize w-[200px]" onClick={onCreate}>
-        {createLoading ? <span className="loading loading-spinner loading-md" /> : "Create AA Address"}
-      </button>
+    <VStack mt="30px !important">
+      <Button onClick={onCreate} isLoading={createLoading}>
+        Create AA Account
+      </Button>
       {aaAddress && (
-        <div className="mt-[12px]">
-          <div>{`AA Address: ${aaAddress}`}</div>
+        <VStack mt="20px !important">
+          <Text fontWeight="600" padding="0 30px">{`AA Address: ${aaAddress}`}</Text>
+          <Text mt="30px !important" fontSize="14px" fontWeight="500">
+            The unsigned message is: "Hello JoyID"
+          </Text>
+          <Button isLoading={signLoading} onClick={onSignMessage}>
+            Sign Message with AA account
+          </Button>
+          {signature && <Text mt="20px !important" padding="0 30px" wordBreak="break-word">{`The signature is: ${signature}`}</Text>}
 
-          <div className="mt-[30px]">The unsigned message is: "Hello JoyID"</div>
-          <button className="btn btn-primary capitalize w-[200px] mt-[12px]" onClick={onSignMessage}>
-            {signLoading ? <span className="loading loading-spinner loading-md" /> : "Sign Message"}
-          </button>
-          {signature && (
-            <div>
-              <div>The signature is</div>
-              <div className="break-words">{signature}</div>
-            </div>
-          )}
-
-          <button className="btn btn-primary capitalize w-[200px] mt-[24px]" onClick={onCreateSessionKey}>
-            {createSessionLoading ? <span className="loading loading-spinner loading-md" /> : "Create Session Key"}
-          </button>
+          <Button mt="30px !important" isLoading={createSessionLoading} onClick={onCreateSessionKey}>
+            Create Session Key with AA account
+          </Button>
           {sessionAddress && (
-            <div className="mt-[12px]">
-              <div>The session key has been created successfully</div>
-              <button className="btn btn-primary capitalize w-[240px] mt-[12px]" onClick={mintWithSessionKey}>
-                {sessionMintLoading ? <span className="loading loading-spinner loading-md" /> : "Mint NFT with Session Key"}
-              </button>
-            </div>
+            <>
+              <Text mt="20px !important" padding="0 30px" wordBreak="break-word">
+                {`The address of session key is: ${sessionAddress}`}
+              </Text>
+              <Button mt="30px !important" isLoading={sessionMintLoading} onClick={mintWithSessionKey}>
+                Mint NFT with Session Key
+              </Button>
+
+              {txHash && <Text mt="20px !important" padding="0 30px" wordBreak="break-word">{`The mint tx hash is: ${txHash}`}</Text>}
+            </>
           )}
-        </div>
+        </VStack>
       )}
-    </div>
+    </VStack>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {VStack, Text, Button} from "@chakra-ui/react";
 import { connect } from "@joyid/evm";
 import "./App.css";
 import { useCurrentAddress, useUpdateAaAddress, useUpdateAddress } from "./hooks/useAccount";
@@ -29,28 +30,27 @@ export default function App() {
   }
 
   return (
-    <div id="app">
-      <div className="text-2xl sticky font-bold text-center">JoyID EVM AA demo</div>
+    <VStack padding="25px">
+      <Text fontSize="32px" mt="20px">
+        JoyID EVM AA Demo
+      </Text>
       {address ? (
-        <div className="mb-[10px]">
-          <h1 className="text-xl mb-4">Connected: </h1>
-          <div>{address}</div>
-          <div className="divider" />
+        <VStack mt="30px !important">
+          <Text fontSize="14px" fontWeight="600" padding="0 30px">
+            {`Ethereum Address: ${address}`}
+          </Text>
+
           <EvmAA />
 
-          <div className="divider" />
-          <button className="btn btn-primary capitalize w-[120px]" onClick={disconnect}>
+          <Button mt="60px !important" onClick={disconnect}>
             Disconnect
-          </button>
-          <div className="divider" />
-        </div>
+          </Button>
+        </VStack>
       ) : (
-        <div className="text-center">
-          <button className="btn btn-primary capitalize w-[200px] mt-[30px]" disabled={connectLoading} onClick={onConnect}>
-            {connectLoading ? <span className="loading loading-spinner loading-md" /> : "JoyID Passkey connect"}
-          </button>
-        </div>
+        <Button mt="30px !important" disabled={connectLoading} onClick={onConnect} isLoading={connectLoading}>
+          JoyID Passkey connect
+        </Button>
       )}
-    </div>
+    </VStack>
   );
 }
