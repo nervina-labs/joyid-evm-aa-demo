@@ -2,8 +2,8 @@ import { useState } from "react";
 import {VStack, Text, Button} from "@chakra-ui/react";
 import { connect } from "@joyid/evm";
 import "./App.css";
-import { useCurrentAddress, useUpdateAaAddress, useUpdateAddress } from "./hooks/useAccount";
-import { EvmAA } from "./components/EvmAA";
+import { useCurrentAddress, useUpdateAaAddress, useUpdateAddress } from "./useAccount";
+import { EvmAA } from "./EvmAA";
 
 export default function App() {
   const updateAddress = useUpdateAddress();

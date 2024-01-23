@@ -3,12 +3,11 @@ import {Hex, stringToBytes, parseAbi, encodeFunctionData} from "viem";
 import {LocalAccountSigner} from "@alchemy/aa-core"
 import {VStack, Text, Button} from "@chakra-ui/react";
 import {SessionKeyProvider, getPermissionFromABI, ParamOperator, constants} from "@zerodev/sdk";
-import { useAaAddress, useCurrentAddress, useUpdateAaAddress } from "../hooks/useAccount";
-import { JoySigner } from "../evm-aa/signer";
-import { getAAProvider } from "../evm-aa/provider";
+import { useAaAddress, useCurrentAddress, useUpdateAaAddress } from "./useAccount";
+import { JoyIDSigner } from "@joyid/evm/aa";
 import { ECDSAProvider } from "@zerodev/sdk";
 import { useEffect } from "react";
-import { TEST_SESSION_KEY, ZERO_DEV_PROJECT_ID } from "../env";
+import { TEST_SESSION_KEY, ZERO_DEV_PROJECT_ID } from "./env";
 
 // The NFT contract we will be interacting with
 const contractAddress = '0x34bE7f35132E97915633BC1fc020364EA5134863'
@@ -17,8 +16,15 @@ const contractABI = parseAbi([
   'function balanceOf(address owner) external view returns (uint256 balance)'
 ])
 
+const initAAProvider = async (ethAddress: Hex) => {
+  return await ECDSAProvider.init({
+    projectId: ZERO_DEV_PROJECT_ID,
+    owner: new JoyIDSigner(ethAddress),
+  });
+};
+
 export const EvmAA = () => {
-  const address = useCurrentAddress();
+  const ethAddress = useCurrentAddress();
   const aaAddress = useAaAddress()
   const updateAaAddress = useUpdateAaAddress();
   const [provider, setProvider] = useState<ECDSAProvider>();
@@ -33,14 +39,10 @@ export const EvmAA = () => {
   const [sessionMintLoading, setSessionMintLoading] = useState(false);
 
   useEffect(() => {
-    const init = async () => {
-      const signer = new JoySigner(address as Hex);
-      setProvider(await getAAProvider(signer));
-    };
-    init();
-  }, [address]); 
+    initAAProvider(ethAddress as Hex).then(setProvider)
+  }, [ethAddress]); 
 
-  const onCreate = async () => {
+  const createAAAccount = async () => {
     setCreateLoading(true);
     const aaAddr = await provider?.getAddress();
     updateAaAddress(aaAddr);
@@ -105,7 +107,7 @@ export const EvmAA = () => {
 
   return (
     <VStack mt="30px !important">
-      <Button onClick={onCreate} isLoading={createLoading}>
+      <Button onClick={createAAAccount} isLoading={createLoading}>
         Create AA Account
       </Button>
       {aaAddress && (
@@ -124,14 +126,14 @@ export const EvmAA = () => {
           </Button>
           {sessionAddress && (
             <>
-              <Text mt="20px !important" padding="0 30px" wordBreak="break-word">
+              <Text mt="20px !important" padding="0 30px" fontWeight="600" wordBreak="break-word">
                 {`The address of session key is: ${sessionAddress}`}
               </Text>
               <Button mt="30px !important" isLoading={sessionMintLoading} onClick={mintWithSessionKey}>
                 Mint NFT with Session Key
               </Button>
 
-              {txHash && <Text mt="20px !important" padding="0 30px" wordBreak="break-word">{`The mint tx hash is: ${txHash}`}</Text>}
+              {txHash && <Text mt="20px !important" padding="0 30px" fontWeight="500" wordBreak="break-word">{`The mint tx hash is: ${txHash}`}</Text>}
             </>
           )}
         </VStack>

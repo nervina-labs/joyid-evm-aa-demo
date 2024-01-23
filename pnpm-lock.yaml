@@ -18,8 +18,8 @@ dependencies:
     specifier: ^11.11.0
     version: 11.11.0(@emotion/react@11.11.3)(@types/react@18.2.45)(react@18.2.0)
   '@joyid/evm':
-    specifier: 0.2.1
-    version: 0.2.1
+    specifier: 0.3.0-beta.1
+    version: 0.3.0-beta.1
   '@joyid/wagmi':
     specifier: ^0.1.0
     version: 0.1.0(viem@1.20.3)(wagmi@1.4.12)
@@ -2365,12 +2365,12 @@ packages:
       viem: 1.20.3(typescript@5.3.3)(zod@3.22.4)
     dev: false
 
-  /@joyid/evm@0.2.1:
-    resolution: {integrity: sha512-WfohEWHt55WhAVvg15MnByDcLGPZSquDxapAQKADl2azZXVm+xGthP/uu6quYiGPHcw6oZz9QKZU8eOgxmdU9g==}
-    dev: false
-
   /@joyid/evm@0.2.4:
     resolution: {integrity: sha512-OayH6uQmnzGdcjiHSCpyf5gs9WSYTyKE1t1qPYxacgz2NiCjwnNDSkc0GKAHp1wGUCscKMjxoXNy/+I0/8Zweg==}
+    dev: false
+
+  /@joyid/evm@0.3.0-beta.1:
+    resolution: {integrity: sha512-okExQ/jFzy0iD5ec1u/nq6q7SHTvMw1LB0M6QoL+L8awxlocPpeNV7ZZIRy1+l6VSpiz2Zt3sSdM5HX+9w/ymA==}
     dev: false
 
   /@joyid/wagmi@0.1.0(viem@1.20.3)(wagmi@1.4.12):

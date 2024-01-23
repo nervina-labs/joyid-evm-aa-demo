@@ -11,7 +11,7 @@ applications with [ZeroDev](https://docs.zerodev.app/) SDK.
 pnpm install
 ```
 
-2. Update `ZERO_DEV_PROJECT_ID` and `TEST_SESSION_KEY` in `env/index.ts`
+2. Update `JOYID_APP_URL`, `ZERO_DEV_PROJECT_ID` and `TEST_SESSION_KEY` in `src/env.ts`
 
 > The `JOYID_APP_URL` is the joyid wallet app url, please set to https://testnet.joyid.dev for staging env, or https://app.joy.id for product env.
 >
@@ -25,4 +25,23 @@ pnpm install
 ```
 pnpm build
 pnpm test
+```
+
+### Create AA account with JoyID Wallet
+
+```
+import { ECDSAProvider } from "@zerodev/sdk";
+import { connect } from "@joyid/evm";
+import { JoyIDSigner } from "@joyid/evm/aa";
+
+// connect JoyID wallet to get ethereum address
+const ethAddress = await connect();
+
+// The ZeroDev provider
+const ecdsaProvider = await ECDSAProvider.init({
+  // ZeroDev projectId
+  projectId,
+  // The signer
+  owner: new JoyIDSigner(ethAddress),
+});
 ```
