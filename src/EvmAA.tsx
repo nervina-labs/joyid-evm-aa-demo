@@ -107,8 +107,8 @@ export const EvmAA = () => {
 
   return (
     <VStack mt="30px !important">
-      <Button onClick={createAAAccount} isLoading={createLoading}>
-        Create AA Account
+      <Button onClick={createAAAccount} isLoading={createLoading} disabled={!provider}>
+        {provider ? "Create AA Account" : "Initializing"}
       </Button>
       {aaAddress && (
         <VStack mt="20px !important">
@@ -133,7 +133,14 @@ export const EvmAA = () => {
                 Mint NFT with Session Key
               </Button>
 
-              {txHash && <Text mt="20px !important" padding="0 30px" fontWeight="500" wordBreak="break-word">{`The mint tx hash is: ${txHash}`}</Text>}
+              {txHash && (
+                <Text
+                  mt="20px !important"
+                  padding="0 30px"
+                  fontWeight="500"
+                  wordBreak="break-word"
+                >{`The mint tx hash is: ${txHash}`}</Text>
+              )}
             </>
           )}
         </VStack>
